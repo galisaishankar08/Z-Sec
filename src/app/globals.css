@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Elsie';
+  src: url('/fonts/Elsie/Elsie-Regular.ttf') format('opentype');
+}
+@font-face {
+  font-family: 'ElsieBold';
+  src: url('/fonts/Elsie/Elsie-Black.ttf') format('opentype');
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #F7FEE7;
+  font-family: 'open-sans';
+  scroll-behavior: smooth;
+}
+
+img {
+  user-select: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.ScrollStyle
+{
+  max-height: 470px;
+  overflow-y: scroll;
+}
