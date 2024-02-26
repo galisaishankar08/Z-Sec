@@ -6,9 +6,14 @@ interface ShuffledJson {
   [key: string]: KeyboardValue;
 }
 
+interface KeyboardLayout {
+  default: ShuffledJson;
+  shift: ShuffledJson;
+}
+
 interface VirtualKeyboardProps {
   onKeyPress: (key: string) => void;
-  randomKeyboardLayout: ShuffledJson;
+  randomKeyboardLayout: KeyboardLayout;
 }
 
 const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
