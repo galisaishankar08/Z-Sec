@@ -11,7 +11,16 @@ interface ShuffledJson {
 }
 
 const page = () => {
-  const [input, setInput] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone_number: "",
+    password: "",
+  });
+
+  const [input, setInput] = useState({
+    password: "",
+  });
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [activeInput, setActiveInput] = useState("");
 
@@ -201,21 +210,39 @@ const page = () => {
           updatedValue += key;
       }
       return {
-        email: prevInput.email,
         password: prevInput.password,
         [field]: updatedValue,
       };
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent the default form submission
-
-    // Perform any necessary validation or processing here
-    console.log("Form submitted:", input);
-
-    // Optionally, set the submission state to indicate that the form has been submitted
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    formData.password = input.password;
     setShowKeyboard(false);
+    try {
+      const response = await fetch("/api/userRegistration", {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
+      console.log(formData);
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Form submitted successfully:");
+        setFormData({
+          full_name: "",
+          email: "",
+          phone_number: "",
+          password: "",
+        });
+      } else {
+        console.error("Error submitting form:", data.error);
+      }
+    } catch (error) {
+      console.error("Error catch submitting form:", error);
+    }
   };
 
   return (
@@ -224,15 +251,39 @@ const page = () => {
       <form className={`flex flex-col gap-5 my-4`} onSubmit={handleSubmit}>
         <input
           type="text"
+          id="full_name"
+          className={`h-10 md:w-80 bg-[#CCC5B980] font-sans rounded-md p-2`}
+          placeholder="Full Name"
+          value={formData.full_name}
+          onChange={(e) =>
+            setFormData((formData) => ({
+              ...formData,
+              full_name: e.target.value,
+            }))
+          }
+        />
+        <input
+          type="email"
           id="emailorusername"
           className={`h-10 md:w-80 bg-[#CCC5B980] font-sans rounded-md p-2`}
           placeholder="Email/Username"
-          value={input.email} // Use the value from the input state
-          onChange={(e) => handleInputChange(e, "email")} // Update the input state
-          onClick={() => {
-            setShowKeyboard(true);
-            setActiveInput("email");
-          }}
+          value={formData.email}
+          onChange={(e) =>
+            setFormData((formData) => ({ ...formData, email: e.target.value }))
+          }
+        />
+        <input
+          type="tel"
+          id="phone_number"
+          className={`h-10 md:w-80 bg-[#CCC5B980] font-sans rounded-md p-2`}
+          placeholder="Phone Number"
+          value={formData.phone_number}
+          onChange={(e) =>
+            setFormData((formData) => ({
+              ...formData,
+              phone_number: e.target.value,
+            }))
+          }
         />
         <input
           type="password"
