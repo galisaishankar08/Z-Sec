@@ -39,7 +39,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
       "space",
     ],
   };
-  const randomkeyboardlayout: ShuffledJson = randomKeyboardLayout;
+  const randomkeyboardlayout: KeyboardLayout = randomKeyboardLayout;
 
   const handleKeyPress = (key: string) => {
     if (key === "shift" || key === "caps") {
