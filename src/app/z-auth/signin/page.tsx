@@ -2,6 +2,7 @@
 import React from "react";
 import { useState } from "react";
 import { VirtualKeyboard } from "@/components";
+import axios from 'axios';
 
 type KeyboardValue = string;
 
@@ -208,11 +209,19 @@ const page = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
 
     // Perform any necessary validation or processing here
     console.log("Form submitted:", input);
+
+    try {
+      const response = await axios.post("/api/auth/authenticate", input);
+      const data = await response.data;
+      console.log(data)
+    } catch (error) {
+      console.error("Error catch submitting form:", error);
+    }
 
     // Optionally, set the submission state to indicate that the form has been submitted
     setShowKeyboard(false);

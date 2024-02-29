@@ -1,11 +1,10 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React,{ useState } from "react";
 import { VirtualKeyboard } from "@/components";
+import axios from 'axios';
 
 type KeyboardValue = string;
 
-// Define the type for the JSON object
 interface ShuffledJson {
   [key: string]: KeyboardValue;
 }
@@ -219,15 +218,13 @@ const page = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     formData.password = input.password;
+
+    // console.log(JSON.stringify(formData));
+
     setShowKeyboard(false);
     try {
-      const response = await fetch("/api/userRegistration", {
-        method: "POST",
-        body: JSON.stringify(formData),
-      });
-      console.log(formData);
-
-      const data = await response.json();
+      const response = await axios.post("/api/auth/register", formData);
+      const data = await response.data;
 
       if (data.success) {
         console.log("Form submitted successfully:");
@@ -235,6 +232,10 @@ const page = () => {
           full_name: "",
           email: "",
           phone_number: "",
+          password: "",
+        });
+
+        setInput({
           password: "",
         });
       } else {
