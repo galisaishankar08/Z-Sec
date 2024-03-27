@@ -219,9 +219,16 @@ const page = () => {
       const response = await axios.post("/api/auth/authenticate", input);
       const data = await response.data;
       console.log(data)
-      toast.success("Logged in Successfully");
+      if(data.success){
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.data));
+        toast.success("Logged in Successfully");
+      }
+      else{
+        toast.error("Invalid Credentials");
+      }
     } catch (error) {
-      toast.error("Invalid Credentials");
+      console.log(error)
     }
 
     // Optionally, set the submission state to indicate that the form has been submitted

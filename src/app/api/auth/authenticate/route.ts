@@ -33,10 +33,10 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, data: result, token: token});
       }
       else{
-        return NextResponse.redirect("/z-auth/signin");
+        return NextResponse.json({ success: false, data: result});
       }
     }
-    return NextResponse.redirect("/z-auth/signin");
+    return NextResponse.json({ success: false, data: result});
   } catch (error) {
     console.error("Error connecting to MongoDB", error);
     return NextResponse.json({ error: "Error connecting to MongoDB" });

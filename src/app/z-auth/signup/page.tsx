@@ -282,7 +282,8 @@ const page = () => {
       if (Object.values(passwordPolicies).every((policy) => policy)) {
         const response = await axios.post("https://secure-pass.azurewebsites.net/check_password", inputData);
         const data = await response.data;
-        if (data && data.isSecure) {
+        console.log(data)
+        if (data && data.is_secure) {
           toast.success(data.message);
           setValidate(true);
         } else {
