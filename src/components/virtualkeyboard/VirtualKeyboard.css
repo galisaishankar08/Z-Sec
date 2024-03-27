@@ -1,0 +1,38 @@
+/* VirtualKeyboard.css */
+.virtual-keyboard-container {
+    --keyboard-base-size: 16px; /* Base size for scaling */
+  }
+  
+  .key-button {
+    padding: calc(var(--keyboard-base-size) * 0.25);
+    min-width: calc(var(--keyboard-base-size) * 2);
+    font-size: calc(var(--keyboard-base-size) * 0.75);
+    margin: calc(var(--keyboard-base-size) * 0.1);
+    border: 2px solid #ccc;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .key-button.special {
+    background-color: #ffdddd;
+  }
+  
+  @media (max-width: 600px) {
+    .virtual-keyboard-container {
+      --keyboard-base-size: 10px;
+    }
+  }
+  
+  @media (min-width: 601px) and (max-width: 800px) {
+    .virtual-keyboard-container {
+      --keyboard-base-size: 14px;
+    }
+  }
+  
+  @media (min-width: 801px) {
+    .virtual-keyboard-container {
+      --keyboard-base-size: 18px;
+    }
+  }
+  

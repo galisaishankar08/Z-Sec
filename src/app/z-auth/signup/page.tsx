@@ -1,6 +1,8 @@
 "use client";
 import React,{ useState } from "react";
 import { VirtualKeyboard } from "@/components";
+import toast from "react-hot-toast";
+import { encrypt, packet } from '@/utilities/crypto';
 import axios from 'axios';
 
 type KeyboardValue = string;
@@ -13,6 +15,7 @@ const page = () => {
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
+    date_of_birth: "",
     phone_number: "",
     password: "",
   });
@@ -22,6 +25,7 @@ const page = () => {
   });
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [activeInput, setActiveInput] = useState("");
+  const [validate, setValidate] = useState(false);
 
   const defaultkeyboardvalues: KeyboardValue[] = [
     "`",
@@ -219,18 +223,29 @@ const page = () => {
     e.preventDefault();
     formData.password = input.password;
 
+    const encryptedFormData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => {
+      if (key === "email") {
+        return [key, value];
+      } else {
+        return [key, packet(encrypt(value))];
+      }
+      })
+    );
     // console.log(JSON.stringify(formData));
+    // console.log(encryptedFormData);
 
     setShowKeyboard(false);
     try {
-      const response = await axios.post("/api/auth/register", formData);
+      const response = await axios.post("/api/auth/register", encryptedFormData);
       const data = await response.data;
 
       if (data.success) {
-        console.log("Form submitted successfully:");
+        toast.success("Registered successfully. Please login.");
         setFormData({
           full_name: "",
           email: "",
+          date_of_birth: "",
           phone_number: "",
           password: "",
         });
@@ -238,13 +253,52 @@ const page = () => {
         setInput({
           password: "",
         });
+        window.location.href = "/z-auth/signin";
       } else {
+        toast.error("Please provide valid data.");
         console.error("Error submitting form:", data.error);
       }
     } catch (error) {
       console.error("Error catch submitting form:", error);
     }
   };
+
+  const validatePasswordPolicies = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    const inputData = {
+      name: formData.full_name,
+      email: formData.email,
+      dob: formData.date_of_birth,
+      password: input.password,
+    };
+    if(inputData.password){
+        const passwordPolicies = {
+        length: inputData.password.length >= 8,
+        uppercase: /[A-Z]/.test(inputData.password),
+        lowercase: /[a-z]/.test(inputData.password),
+        number: /[0-9]/.test(inputData.password),
+        special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(inputData.password),
+      };
+      if (Object.values(passwordPolicies).every((policy) => policy)) {
+        const response = await axios.post("https://secure-pass.azurewebsites.net/check_password", inputData);
+        const data = await response.data;
+        if (data && data.isSecure) {
+          toast.success(data.message);
+          setValidate(true);
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        console.log("Password is invalid");
+        toast.error("Password should contain at least 1 uppercase, lowercase, digit, special character, and have a minimum length of 8 characters");
+      }
+    }
+    
+
+    
+  }
+
+  const currentDate = new Date().toISOString().split("T")[0];
 
   return (
     <div>
@@ -262,16 +316,34 @@ const page = () => {
               full_name: e.target.value,
             }))
           }
+          required
         />
         <input
           type="email"
-          id="emailorusername"
+          id="email"
           className={`h-10 md:w-80 bg-[#CCC5B980] font-sans rounded-md p-2`}
-          placeholder="Email/Username"
+          placeholder="Email"
           value={formData.email}
           onChange={(e) =>
             setFormData((formData) => ({ ...formData, email: e.target.value }))
           }
+          required
+        />
+        <input
+          type="date"
+          id="date_of_birth"
+          className={`h-10 md:w-80 bg-[#CCC5B980] font-sans rounded-md p-2`}
+          placeholder="Date of Birth"
+          value={formData.date_of_birth}
+          onChange={(e) =>
+            setFormData((formData) => ({
+              ...formData,
+              date_of_birth: e.target.value,
+            }))
+          }
+          min="1900-01-01"
+          max={currentDate}
+          required
         />
         <input
           type="tel"
@@ -285,7 +357,9 @@ const page = () => {
               phone_number: e.target.value,
             }))
           }
+          required
         />
+
         <input
           type="password"
           id="password"
@@ -297,12 +371,22 @@ const page = () => {
             setShowKeyboard(true);
             setActiveInput("password");
           }}
+          required
         />
+        
+        {validate ? 
         <input
           type="submit"
           value="Submit"
           className={`bg-secondary text-primary w-1/2 mx-auto rounded-md h-10`}
-        />
+        />:
+        <button
+          value="Submit"
+          className={`bg-secondary text-primary w-1/2 mx-auto rounded-md h-10`}
+          onClick={validatePasswordPolicies}
+        > Validate </button>
+      }
+        
       </form>
 
       {showKeyboard && (

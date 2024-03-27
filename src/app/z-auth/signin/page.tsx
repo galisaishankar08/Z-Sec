@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { VirtualKeyboard } from "@/components";
 import axios from 'axios';
 
 type KeyboardValue = string;
 
-// Define the type for the JSON object
 interface ShuffledJson {
   [key: string]: KeyboardValue;
 }
@@ -219,8 +219,9 @@ const page = () => {
       const response = await axios.post("/api/auth/authenticate", input);
       const data = await response.data;
       console.log(data)
+      toast.success("Logged in Successfully");
     } catch (error) {
-      console.error("Error catch submitting form:", error);
+      toast.error("Invalid Credentials");
     }
 
     // Optionally, set the submission state to indicate that the form has been submitted
@@ -232,10 +233,10 @@ const page = () => {
       <h3 className={`text-black text-center text-4xl font-normal`}>Signin</h3>
       <form className={`flex flex-col gap-5 my-4`} onSubmit={handleSubmit}>
         <input
-          type="text"
-          id="emailorusername"
+          type="email"
+          id="email"
           className={`h-10 md:w-80 bg-[#CCC5B980] font-sans rounded-md p-2`}
-          placeholder="Email/Username"
+          placeholder="Email"
           value={input.email} // Use the value from the input state
           onChange={(e) => handleInputChange(e, "email")} // Update the input state
           onClick={() => {
@@ -255,56 +256,6 @@ const page = () => {
             setActiveInput("password");
           }}
         />
-
-        <div
-          className={`grid grid-flow-col justify-center items-center gap-3 md:gap-5 md:w-80`}
-        >
-          <input
-            type="text"
-            name="otp1"
-            id="otp1"
-            maxLength={1}
-            pattern="[0-9]"
-            placeholder="0"
-            className={`h-10 w-10 bg-[#CCC5B980] font-sans rounded-md text-center`}
-          />
-          <input
-            type="text"
-            name="otp2"
-            id="otp2"
-            maxLength={1}
-            pattern="[0-9]"
-            placeholder="0"
-            className={`h-10 w-10 bg-[#CCC5B980] font-sans rounded-md text-center`}
-          />
-          <input
-            type="text"
-            name="otp3"
-            id="otp3"
-            maxLength={1}
-            pattern="[0-9]"
-            placeholder="0"
-            className={`h-10 w-10 bg-[#CCC5B980] font-sans rounded-md text-center`}
-          />
-          <input
-            type="text"
-            name="otp4"
-            id="otp4"
-            maxLength={1}
-            pattern="[0-9]"
-            placeholder="0"
-            className={`h-10 w-10 bg-[#CCC5B980] font-sans rounded-md text-center`}
-          />
-          <input
-            type="text"
-            name="otp5"
-            id="otp5"
-            maxLength={1}
-            pattern="[0-9]"
-            placeholder="0"
-            className={`h-10 w-10 bg-[#CCC5B980] font-sans rounded-md text-center`}
-          />
-        </div>
         <input
           type="submit"
           value="Submit"

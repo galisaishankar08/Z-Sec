@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import Draggable from "react-draggable";
+import { FaBackspace } from 'react-icons/fa';
 
 type KeyboardValue = string;
 interface ShuffledJson {
@@ -60,6 +62,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
     }
   };
   return (
+    <Draggable>
     <div className="mb-4 fixed bottom-0 left-1/2 transform -translate-x-1/2">
       <div className="grid grid-flow-row gap-2 h-fit w-fit bg-gray-200 rounded-md p-2 border-4 border-secondary font-sans">
         {layout[shift ? "shift" : "default"].map((row, i) => (
@@ -70,7 +73,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                 onClick={() => handleKeyPress(key)}
                 className={`bg-white border-2 border-gray-300 p-2 rounded-md min-w-10 col-auto shadow-[0_0_5px_#F7FEE7,0_0_10px_#F7FEE7,0_0_15px_#F7FEE7,0_0_25px_#F7FEE7] ${
                   shift && key === "shift" ? "bg-red-500" : ""
-                } ${shift && key === "caps" ? "bg-red-500" : ""} ${key === "close" ? "bg-red-500" : ""}`}
+                } ${shift && key === "caps" ? "bg-red-500" : ""} ${key === "close" || key === "backspace" ? "bg-red-500" : ""}`}
               >
                 {[
                   "backspace",
@@ -81,7 +84,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                   "caps",
                   "shift",
                 ].includes(key) ? (
-                  key
+                  key === "backspace" ? <FaBackspace /> : key
                 ) : (
                   <div className="relative grid grid-flow-col space-x-2">
                     <p className="absolute top-0 right-0-0 text-xs">{key}</p>
@@ -96,6 +99,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         ))}
       </div>
     </div>
+    </Draggable>
   );
 };
 
